@@ -84,6 +84,13 @@ async function run() {
         const result = await productsCollection.find().toArray();
         res.send(result);
       })
+
+      app.get('/myproducts',verifyJWT, async(req, res) => {
+        const email = req.query.email;
+        const query = {ownerEmail: email}
+        const result = await productsCollection.find(query).toArray();
+        res.send(result);
+      })
       
   
   // Send a ping to confirm a successful connection
