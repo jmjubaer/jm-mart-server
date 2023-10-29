@@ -12,11 +12,11 @@ app.use(express.json());
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
-      return res.status(401).send({ message: "Unauthorize access" });
+    return res.status(401).send({ message: "Unauthorize access" });
   }
   const token = authorization.split(" ")[1];
-  jwt.verify(token, process.env.VITE_TOKEN, (err, decoded) => {
-      if (err) {
+  jwt.verify(token,process.env.VITE_TOKEN,(err, decoded) => {
+    if (err) {
           return res.status(403).send({ message: "Forbidden access" });
       } else {
           req.decoded = decoded;
@@ -61,7 +61,7 @@ async function run() {
         app.post("/jwt", async (req, res) => {
           const user = req.body;
           const token = jwt.sign(user, process.env.VITE_TOKEN, {
-              expiresIn: "1h",
+              expiresIn: "10h",
           });
           res.send({ token });
       });
@@ -85,12 +85,19 @@ async function run() {
         res.send(result);
       })
 
+      app.post('/product',verifyJWT, async(req, res) => {
+        const product = req.body;
+        const result = await productsCollection.insertOne(product);
+        res.send(result);
+      })
+
       app.get('/myproducts',verifyJWT, async(req, res) => {
         const email = req.query.email;
         const query = {ownerEmail: email}
         const result = await productsCollection.find(query).toArray();
         res.send(result);
       })
+
       
   
   // Send a ping to confirm a successful connection
