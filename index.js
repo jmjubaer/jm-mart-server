@@ -35,7 +35,7 @@ app.listen(port, () => {
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://mdjubaerm16247:jubaer12islam@cluster0.wxf5f5n.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -95,6 +95,13 @@ async function run() {
         const email = req.query.email;
         const query = {ownerEmail: email}
         const result = await productsCollection.find(query).toArray();
+        res.send(result);
+      })
+
+      app.delete('/myproducts/:id',verifyJWT, async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const result = await productsCollection.deleteOne(filter);
         res.send(result);
       })
 
